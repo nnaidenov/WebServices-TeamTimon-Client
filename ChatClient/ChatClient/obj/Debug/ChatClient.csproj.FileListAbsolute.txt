@@ -1,0 +1,5 @@
+C:\Users\Ferdi\Documents\GitHub\WebServices-TeamTimon-Client\ChatClient\ChatClient\bin\ChatClient.dll
+C:\Users\Ferdi\Documents\GitHub\WebServices-TeamTimon-Client\ChatClient\ChatClient\bin\ChatClient.pdb
+C:\Users\Ferdi\Documents\GitHub\WebServices-TeamTimon-Client\ChatClient\ChatClient\obj\Debug\ChatClient.csprojResolveAssemblyReference.cache
+C:\Users\Ferdi\Documents\GitHub\WebServices-TeamTimon-Client\ChatClient\ChatClient\obj\Debug\ChatClient.dll
+C:\Users\Ferdi\Documents\GitHub\WebServices-TeamTimon-Client\ChatClient\ChatClient\obj\Debug\ChatClient.pdb

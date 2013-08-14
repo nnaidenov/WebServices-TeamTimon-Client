@@ -1,0 +1,14 @@
+﻿body {
+}
+
+#content {
+    width: 500px;
+    height: 300px;
+    overflow-y: scroll;
+    border: 2px solid black;
+    margin: auto;
+}
+#send-form {
+    width: 500px;
+    margin:auto;
+}
