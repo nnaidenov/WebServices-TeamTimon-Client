@@ -117,6 +117,9 @@ var persisters = (function () {
                 channel: channel,
                 message: success,
             });
+            //get the history for the channel
+            //before the subscription
+            this.history(channel, success);
         },
         publish: function (channel, message) {
             this.pubnub.publish({
@@ -124,6 +127,16 @@ var persisters = (function () {
                 message: message
             })
         },
+        history: function (channel, success) {
+            this.pubnub.history({
+                channel: channel,
+                limit: 100
+            }, function (messages) {
+                for (var i = 0; i < messages[0].length; i++) {
+                    success(messages[0][i])
+                }
+             });
+        }
     });
     return {
         get: function (url) {

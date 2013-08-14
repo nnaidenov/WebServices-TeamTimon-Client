@@ -6,13 +6,15 @@
 var controllers = (function () {
 
     var rootUrl = "http://localhost:40643/api/";
+    var userTextColor = "#aa0000";
+    var otherUsersTextColor = "#0000aa";
     var Controller = Class.create({
         init: function () {
             this.persister = persisters.get(rootUrl);
         },
         loadUI: function (selector) {
             if (this.persister.isUserLoggedIn()) {
-                this.loadGameUI(selector);
+                this.loadChatUI(selector);
             }
             else {
                 this.loadLoginFormUI(selector);
@@ -23,9 +25,9 @@ var controllers = (function () {
             var loginFormHtml = ui.loginForm()
             $(selector).html(loginFormHtml);
         },
-        loadGameUI: function (selector) {
+        loadChatUI: function (selector) {
             var self = this;
-            var gameUIHtml = ui.gameUI(this.persister.nickname());
+            var gameUIHtml = ui.chatUI(this.persister.nickname());
             $(selector).html(gameUIHtml);
 
             this.attachUIEventHandlers(selector);
@@ -84,14 +86,24 @@ var controllers = (function () {
         setChatReceiver: function (channel, selector) {
             var self = this;
             this.persister.pubnub.subscribe(channel, function (message) {
-                $(selector).append(message);
+                message = new String(message);
+                var nameInMessage = message.substr(0, message.indexOf(":", 0));
+                var color = userTextColor;
+                if (nameInMessage != self.persister.username()) {
+                    color = otherUsersTextColor;
+                }
+
+                ui.appendTextWithColor(selector, message, color);
+                $(selector).stop().animate({
+                    scrollTop: $(selector)[0].scrollHeight
+                }, 800);
             });
         },
         setChatSender: function (channel, tb_selector, btn_selector) {
             var self = this;
             $(btn_selector).on("click", null, function (e) {
                 e.preventDefault();
-                var message = self.persister.username() + ": " + $(tb_selector).val() + '<br/>';
+                var message = self.persister.username() + ": " + $(tb_selector).val();
                 $(tb_selector).val('');
                 //console.log(message);
                 self.persister.pubnub.publish(channel, message);
@@ -107,6 +119,6 @@ var controllers = (function () {
 
 $(function () {
     var controller = controllers.get();
-    controller.setChatReceiver("ferdi", "#content");
+    controller.setChatReceiver("ferdi", "#chat-text-container");
     controller.setChatSender("ferdi", "#send-tb","#send-btn");
 });

@@ -1,4 +1,5 @@
-﻿var ui = (function () {
+﻿/// <reference path="jquery-2.0.3.js" />
+var ui = (function () {
 
     function buildLoginForm() {
         var html =
@@ -28,7 +29,7 @@
         return html;
     }
 
-    function buildGameUI(nickname) {
+    function buildChatUI(username) {
         var html = '<h1>hello chat</h1>';
         return html;
     }
@@ -50,10 +51,17 @@
         return list;
     }
 
+    function appendTextWithColor(selector, message, color) {
+        var paragraph = $('<p>');
+        paragraph.css("color", color);
+        paragraph.html(message);
+        $(selector).append(paragraph);
+    }
     return {
-        gameUI: buildGameUI,
+        chatUI: buildChatUI,
         loginForm: buildLoginForm,
         messagesList: buildMessagesList,
+        appendTextWithColor: appendTextWithColor,
     }
 
 }());

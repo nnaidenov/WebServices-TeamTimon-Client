@@ -1,14 +1,26 @@
 ﻿body {
 }
-
-#content {
+#chat-window {
     width: 500px;
     height: 300px;
+    border: 2px solid green;
+    margin:auto;
+}
+#chat-text-container {
+    width: 486px;
+    height: 200px;
     overflow-y: scroll;
-    border: 2px solid black;
-    margin: auto;
+    margin: 5px;
 }
 #send-form {
     width: 500px;
     margin:auto;
+}
+#send-tb {
+    width: 436px;
+    height: 80px;
+}
+#send-btn {
+    width: 50px;
+    height: 80px;
 }
