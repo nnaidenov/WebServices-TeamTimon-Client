@@ -22,8 +22,20 @@ var httpRequester = (function () {
             error: error
         });
     }
+    function post(url, data, success, error) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            contentType: false,
+            processData: false,
+            data: data,
+            success: success,
+            error: error
+        });
+    }
     return {
         getJSON: getJSON,
-        postJSON: postJSON
+        postJSON: postJSON,
+        post: post
     };
 }());

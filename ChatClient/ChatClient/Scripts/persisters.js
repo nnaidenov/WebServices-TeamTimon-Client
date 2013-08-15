@@ -26,6 +26,7 @@ var persisters = (function () {
             this.user = new UserPersister(this.rootUrl);
             this.chat = new ChatPersister(this.rootUrl);
             this.channel = new ChannelPersister(this.rootUrl);
+            this.file = new FilePersister(this.rootUrl);
             this.pubnub = new PubnubPersister("demo", "demo");
         },
         isUserLoggedIn: function () {
@@ -67,13 +68,13 @@ var persisters = (function () {
                     success(data);
                 }, error);
         },
-        //logout: function (success, error) {
-        //    var url = this.rootUrl + "logout/" + sessionKey;
-        //    httpRequester.getJSON(url, function (data) {
-        //        clearUserData();
-        //        success(data);
-        //    }, error)
-        //},
+        logout: function (success, error) {
+            var url = this.rootUrl + "logout/" + sessionKey;
+            httpRequester.getJSON(url, function (data) {
+                clearUserData();
+                success(data);
+            }, error)
+        },
         getAll: function (success, error) {
             var url = this.rootUrl + "get";
             httpRequester.getJSON(url, success, error);
@@ -108,6 +109,15 @@ var persisters = (function () {
             httpRequester.getJSON(url, success, error);
         }
     });
+
+    var FilePersister = Class.create({
+        init: function (rootUrl) {
+            this.rootUrl = rootUrl + "upload/upload-avatar/" + sessionKey;
+        },
+        uploadFile: function (data, success, error) {
+            httpRequester.post(this.rootUrl, data, success, error);
+        }
+    });
     var PubnubPersister = Class.create({
         init: function (publish_key, subscribe_key) {
             this.publish_key = publish_key;
@@ -126,14 +136,16 @@ var persisters = (function () {
             //    cipher_key: 'my-super-secret-password-key'
             //});
         },
-        subscribe: function (channel, success) {
+        subscribe: function (channel,loadHistory, success) {
             this.pubnub.subscribe({
                 channel: channel,
                 message: success,
             });
             //get the history for the channel
             //before the subscription
-            this.history(channel, success);
+            if (loadHistory) {
+                this.history(channel, success);
+            }
         },
         publish: function (channel, message) {
             this.pubnub.publish({
