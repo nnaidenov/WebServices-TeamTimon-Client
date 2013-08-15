@@ -26,6 +26,7 @@ var httpRequester = (function () {
         $.ajax({
             url: url,
             type: "POST",
+            accept: "application/json",
             contentType: false,
             processData: false,
             data: data,

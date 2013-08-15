@@ -6,18 +6,23 @@
 var persisters = (function () {
     var username = localStorage.getItem("username"); 
     var sessionKey = localStorage.getItem("sessionKey");
+    var userId = localStorage.getItem("userId");
 
     function saveUserData(userData) {
         localStorage.setItem("username", userData.Username);
         localStorage.setItem("sessionKey", userData.SessionKey);
+        localStorage.setItem("userId", userData.UserID);
         username = userData.Username;
         sessionKey = userData.SessionKey;
+        userId = userData.UserID;
     }
     function clearUserData() {
         localStorage.removeItem("username");
         localStorage.removeItem("sessionKey");
+        localStorage.removeItem("userId");
         username = "";
         sessionKey = "";
+        userId = "";
     }
 
     var MainPersister = Class.create({
@@ -35,6 +40,9 @@ var persisters = (function () {
         },
         username: function () {
             return username;
+        },
+        userId: function () {
+            return userId;
         }
     });
 
@@ -112,10 +120,14 @@ var persisters = (function () {
 
     var FilePersister = Class.create({
         init: function (rootUrl) {
-            this.rootUrl = rootUrl + "upload/upload-avatar/" + sessionKey;
+            this.rootUrl = "http://localhost:8759/api/" + "upload/upload-avatar/" + sessionKey;
         },
         uploadFile: function (data, success, error) {
             httpRequester.post(this.rootUrl, data, success, error);
+        },
+        sendFile: function (data,channel, success, error) {
+            var url = "http://localhost:8759/api/upload/upload-file/" + sessionKey + "?channel=" + channel;
+            httpRequester.post(url, data, success, error);
         }
     });
     var PubnubPersister = Class.create({

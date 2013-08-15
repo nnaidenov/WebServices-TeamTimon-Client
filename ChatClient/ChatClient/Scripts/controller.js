@@ -6,8 +6,8 @@
 
 var controllers = (function () {
 
-    //var rootUrl = "http://chatclienttimon.apphb.com/api/";
-    var rootUrl = "http://localhost:8759/api/";
+    var rootUrl = "http://chatclienttimon.apphb.com/api/";
+    //var rootUrl = "http://localhost:8759/api/";
     var userTextColor = "#aa0000";
     var otherUsersTextColor = "#0000aa";
     var timeIntervalChats = null;
@@ -44,6 +44,7 @@ var controllers = (function () {
             this.setChatReceiver("chat-text-container", "#chat-text-container", false);
             var greetingElement = $("<span class='left' id='greeting'>Hello, " + this.persister.username() + "<span>");
             $("#user-info").append(greetingElement);
+            this.uploadAvatar();
         },
         attachUIEventHandlers: function (selector) {
             var wrapper = $(selector);
@@ -123,12 +124,28 @@ var controllers = (function () {
                 if (window.FormData !== undefined) {
                     var data = new FormData($('#upload-form')[0]);
                     console.log(data);
-                    self.persister.file.uploadFile(data, function () { console.log("file uploaded"); },
+                    self.persister.file.uploadFile(data, function (data) { console.log("file uploaded" + data); },
                         function () { console.log("failed to upload file"); });
                 } else {
                     alert("your browser sucks!");
                 }
+                $("#uploadFile").val("");
+                setTimeout(function () { self.uploadAvatar(); }, 15000);
+            });
+            wrapper.on("submit", "#send-file-form", function (e) {
+                e.stopPropagation();
+                e.preventDefault();
 
+                if (window.FormData !== undefined) {
+                    var data = new FormData($('#send-file-form')[0]);
+                    var selectedPanel = $("#tabscontent div.chat-text-container[aria-hidden='false']");
+                    var channel = selectedPanel[0].id;
+                    self.persister.file.sendFile(data,channel, function (data) { console.log("file sent" + data); },
+                        function () { console.log("failed to send file"); });
+                } else {
+                    alert("your browser sucks!");
+                }
+                $("#sendFile-file").val("");
             });
         },
         openNewChats: function () {
@@ -205,6 +222,15 @@ var controllers = (function () {
                 }
                 $(selector).html(ulEl);
             }, function () { console.log("Error loading users"); });
+        },
+        uploadAvatar: function () {
+            var userId = this.persister.userId();
+            this.persister.user.getUserById(userId, function (data) {
+                $("#avatar").attr("src", data.AvatarURL);
+                console.log(data.AvatarURL);
+            }, function () {
+                console.log("Error loading avatar");
+            });
         }
     });
     return {
