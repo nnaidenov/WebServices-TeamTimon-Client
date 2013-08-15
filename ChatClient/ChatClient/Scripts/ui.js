@@ -37,7 +37,7 @@ var ui = (function () {
                            '<ul id="active-chats-list">' +
                                '<li><a href="#chat-text-container">Welcome!</a></li>' +
                            '</ul>' +
-                           '<div id="chat-text-container" class="chat-text-container">Hello to Timon chat!</div>' +
+                           '<div id="chat-text-container" data-channel="ferdi" class="chat-text-container">Hello to Timon chat!</div>' +
                        '</div>' +
                    '</div>' +
                    '<div id="users-window"></div>' +

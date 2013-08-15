@@ -25,6 +25,7 @@ var persisters = (function () {
             this.rootUrl = rootUrl;
             this.user = new UserPersister(this.rootUrl);
             this.chat = new ChatPersister(this.rootUrl);
+            this.channel = new ChannelPersister(this.rootUrl);
             this.pubnub = new PubnubPersister("demo", "demo");
         },
         isUserLoggedIn: function () {
@@ -85,20 +86,28 @@ var persisters = (function () {
 
     var ChatPersister = Class.create({
         init: function (rootUrl) {
-            this.rootUrl = rootUrl + "chat/";
+            this.rootUrl = rootUrl + "chats/";
         },
         create: function (userId, success, error) {
             var url = this.rootUrl + "create/" + sessionKey;
-            var user = { userId: userId };
+            var user = { SecondUserId: userId };
             httpRequester.postJSON(url, user, success, error);
         },
         close: function (userId, success, error) {
             var url = this.rootUrl + "close/" + sessionKey;
-            var user = { userId: userId };
+            var user = { SecondUserId: userId };
             httpRequester.postJSON(url, user, success, error);
         }
     });
-
+    var ChannelPersister = Class.create({
+        init: function (rootUrl) {
+            this.rootUrl = rootUrl + "channels/";
+        },
+        getAll: function (success, error) {
+            var url = this.rootUrl + "allUnsuscribeChannels/" + sessionKey;
+            httpRequester.getJSON(url, success, error);
+        }
+    });
     var PubnubPersister = Class.create({
         init: function (publish_key, subscribe_key) {
             this.publish_key = publish_key;

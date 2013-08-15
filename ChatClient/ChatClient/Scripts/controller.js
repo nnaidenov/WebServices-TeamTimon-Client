@@ -34,7 +34,9 @@ var controllers = (function () {
             $(selector).html(gameUIHtml);
             $("#tabscontent").tabs();
             this.loadUsersList("#users-window");
-            this.attachUIEventHandlers(selector);
+            setInterval(function () {
+                self.openNewChats.apply(self);
+            }, 3000);
         },
         attachUIEventHandlers: function (selector) {
             var wrapper = $(selector);
@@ -88,6 +90,41 @@ var controllers = (function () {
                 }, function (err) {
                 });
             });
+            wrapper.on("click", "a.user", function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                var aEl = e.target;
+                var secondUserId = $(aEl).data("id");
+                self.persister.chat.create(secondUserId, function () { console.log("Chat created!") },
+                    function () { console.log("Error creating chat!") });
+                return false;
+            });
+            wrapper.on("click", "#send-btn", function (e) {
+                e.preventDefault();
+                var message = self.persister.username() + ": " + $("#send-tb").val();
+                $("#send-tb").val('');
+                //Get channel
+                var selectedPanel = $("#tabscontent div.chat-text-container[aria-hidden='false']");
+                var channel = selectedPanel[0].id;
+                self.persister.pubnub.publish(channel, message);
+            });
+        },
+        openNewChats: function () {
+            //execute with time interval
+            //request new channels
+            var self = this;
+            this.persister.channel.getAll(function (channelData) {
+                for (var i = 0; i < channelData.length; i++) {
+                    var channel = channelData[i].ChannelName;
+                    var otherUserName = channelData[i].FirstUsername;
+                    if (otherUserName == self.persister.username()) {
+                        otherUserName = channelData[i].SecondUsername;
+                    }
+                    self.createNewChatWindow(channel, otherUserName, "#tabscontent");
+                }
+               }, function () { });
+            //create new tabs for every channel
+            //set newly created divs to receive with setChatReceiver
         },
         setChatReceiver: function (channel, selector) {
             var self = this;
@@ -98,23 +135,40 @@ var controllers = (function () {
                 if (nameInMessage != self.persister.username()) {
                     color = otherUsersTextColor;
                 }
-
+                console.log(message);
                 ui.appendTextWithColor(selector, message, color);
                 $(selector).stop().animate({
                     scrollTop: $(selector)[0].scrollHeight
                 }, 800);
             });
         },
-        setChatSender: function (channel, tb_selector, btn_selector) {
-            var self = this;
-            $(btn_selector).on("click", null, function (e) {
-                e.preventDefault();
-                var message = self.persister.username() + ": " + $(tb_selector).val();
-                $(tb_selector).val('');
-                //console.log(message);
-                self.persister.pubnub.publish(channel, message);
-            });
+        createNewChatWindow: function (channel, otherUserName, tabsSelector) {
+            //create window
+            //create li element
+            //attach elements to tabsSelector
+            //setChatReceiver
+            var chatWindow = $("#" + channel);
+            if (chatWindow.length == 0) {
+                chatWindow = $("<div id='" + channel + "' class = 'chat-text-container' >");
+                liEl = $('<li><a href="#' + channel + '">' + otherUserName + '</a></li>');
+                var tabsContainer = $(tabsSelector);
+                tabsContainer.append(chatWindow);
+                $(tabsSelector +" ul").append(liEl);
+                tabsContainer.tabs("refresh");
+                this.setChatReceiver(channel, "#" + channel);
+            }
         },
+        //setChatSender: function (channel, tb_selector, btn_selector) {
+        //    var self = this;
+        //    //get channel from current active chat window
+        //    $(btn_selector).on("click", null, function (e) {
+        //        e.preventDefault();
+        //        var message = self.persister.username() + ": " + $(tb_selector).val();
+        //        $(tb_selector).val('');
+        //        //console.log(message);
+        //        self.persister.pubnub.publish(channel, message);
+        //    });
+        //},
         loadUsersList: function (selector) {
             this.persister.user.getAll(function (users) {
                 for (var i = 0; i < users.length; i++) {
@@ -137,6 +191,6 @@ var controllers = (function () {
 $(function () {
     var controller = controllers.get();
     controller.loadUI("#container");
-    controller.setChatReceiver("ferdi", "#chat-text-container");
-    controller.setChatSender("ferdi", "#send-tb","#send-btn");
+   // controller.setChatReceiver("ferdi", "#chat-text-container");
 });
+
