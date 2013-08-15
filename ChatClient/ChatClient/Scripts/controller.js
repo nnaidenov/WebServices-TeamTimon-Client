@@ -16,11 +16,10 @@ var controllers = (function () {
         loadUI: function (selector) {
             if (this.persister.isUserLoggedIn()) {
                 this.loadChatUI(selector);
+                console.log(this.persister.isUserLoggedIn());
             }
             else {
-                // this.loadLoginFormUI(selector);
-                console.log("not logged in");
-                this.loadChatUI(selector);
+                this.loadLoginFormUI(selector);
             }
             this.attachUIEventHandlers(selector);
         },
@@ -34,6 +33,7 @@ var controllers = (function () {
             var gameUIHtml = ui.chatUI();
             $(selector).html(gameUIHtml);
             $("#tabscontent").tabs();
+            this.loadUsersList("#users-window");
             this.attachUIEventHandlers(selector);
         },
         attachUIEventHandlers: function (selector) {
@@ -61,6 +61,7 @@ var controllers = (function () {
                 console.log(user);
                 self.persister.user.login(user, function () {
                     console.log("Logged in!");
+                    self.loadChatUI(selector);
                 }, function (err) {
                     // wrapper.find("#error-messages").text(err.responseJSON.Message);
                     console.log("Error logging in!");
@@ -70,13 +71,13 @@ var controllers = (function () {
             wrapper.on("click", "#btn-register", function () {
                 var user = {
                     username: $(selector).find("#tb-register-username").val(),
-                    nickname: $(selector).find("#tb-register-nickname").val(),
                     password: $(selector + " #tb-register-password").val()
                 }
                 self.persister.user.register(user, function () {
-                    self.loadGameUI(selector);
+                    self.loadChatUI(selector);
                 }, function (err) {
-                    wrapper.find("#error-messages").text(err.responseJSON.Message);
+                    console.log("Error registering!");
+                    //wrapper.find("#error-messages").text(err.responseJSON.Message);
                 });
                 return false;
             });
@@ -113,6 +114,17 @@ var controllers = (function () {
                 //console.log(message);
                 self.persister.pubnub.publish(channel, message);
             });
+        },
+        loadUsersList: function (selector) {
+            this.persister.user.getAll(function (users) {
+                for (var i = 0; i < users.length; i++) {
+                    var liEl = $("<li>");
+                    var aEl = $("<a  data-id='" + users[i].UserID + "' href='#' class='user'>");
+                    aEl.html(users[i].Username);
+                    liEl.html(aEl);
+                    $(selector).append(liEl);
+                }
+             }, function () { console.log("Error loading users"); });
         }
     });
     return {
@@ -125,6 +137,6 @@ var controllers = (function () {
 $(function () {
     var controller = controllers.get();
     controller.loadUI("#container");
-   // controller.setChatReceiver("ferdi", "#chat-text-container");
-   // controller.setChatSender("ferdi", "#send-tb","#send-btn");
+    controller.setChatReceiver("ferdi", "#chat-text-container");
+    controller.setChatSender("ferdi", "#send-tb","#send-btn");
 });

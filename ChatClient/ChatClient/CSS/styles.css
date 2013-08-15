@@ -1,43 +1,82 @@
 ﻿body {
 }
+
 #container {
     width: 600px;
     height: 600px;
     border: 2px solid green;
-    margin:auto;
+    margin: auto;
 }
+
 #chat-and-users {
     width: 586px;
     height: 500px;
 }
+
 #chat-display-window {
     width: 386px;
     height: 500px;
-    float:left;
+    float: left;
 }
+
 .chat-text-container {
-    width: 376px;
+    width: 326px;
     height: 400px;
     overflow-y: scroll;
     padding: 5px;
-    float:left;
 }
+
 #users-window {
     width: 176px;
     height: 500px;
     overflow-y: scroll;
     padding: 5px;
-    float:right;
+    float: right;
 }
+
+ #users-window li {
+    list-style-type: none;
+}
+
 #send-form {
     width: 600px;
-    margin:auto;
+    margin: auto;
 }
+
 #send-tb {
     width: 536px;
     height: 80px;
 }
+
 #send-btn {
     width: 50px;
     height: 80px;
+}
+
+#login-form, #register-form {
+    width: 200px;
+    height: 150px;
+    border: 1px solid green;
+    margin: auto;
+}
+
+#login-register-form {
+    width: 300px;
+    height: 300px;
+    padding: 50px;
+    margin: auto;
+}
+
+a, a:visited {
+    color: darkgreen;
+}
+
+#btn-show-login {
+    float: left;
+    text-decoration: none;
+}
+
+#btn-show-register {
+    float: right;
+    text-decoration: none;
 }

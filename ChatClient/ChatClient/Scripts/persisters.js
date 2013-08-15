@@ -8,15 +8,15 @@ var persisters = (function () {
     var sessionKey = localStorage.getItem("sessionKey");
 
     function saveUserData(userData) {
-        localStorage.setItem("username", userData.username);
-        localStorage.setItem("sessionKey", userData.sessionKey);
-        username = userData.username;
-        sessionKey = userData.sessionKey;
+        localStorage.setItem("username", userData.Username);
+        localStorage.setItem("sessionKey", userData.SessionKey);
+        username = userData.Username;
+        sessionKey = userData.SessionKey;
     }
     function clearUserData() {
         localStorage.removeItem("username");
         localStorage.removeItem("sessionKey");
-        nickname = "";
+        username = "";
         sessionKey = "";
     }
 
@@ -28,8 +28,8 @@ var persisters = (function () {
             this.pubnub = new PubnubPersister("demo", "demo");
         },
         isUserLoggedIn: function () {
-            var isLoggedIn = username != null && sessionKey != null;
-            return isLoggedIn;
+            var isLoggedIn = !username  || !sessionKey ;
+            return !isLoggedIn;
         },
         username: function () {
             return username;
@@ -39,10 +39,10 @@ var persisters = (function () {
     var UserPersister = Class.create({
         init: function (rootUrl) {
             //...api/user/
-            this.rootUrl = rootUrl + "users";
+            this.rootUrl = rootUrl + "users/";
         },
         login: function (user, success, error) {
-            var url = this.rootUrl;
+            var url = this.rootUrl + "login";
             var userData = {
                 username: user.username,
                 password: CryptoJS.SHA1(user.username + user.password).toString()
@@ -55,10 +55,10 @@ var persisters = (function () {
                 }, error);
         },
         register: function (user, success, error) {
-            var url = this.rootUrl;
+            var url = this.rootUrl + "register";
             var userData = {
                 username: user.username,
-                authCode: CryptoJS.SHA1(user.username + user.password).toString()
+                password: CryptoJS.SHA1(user.username + user.password).toString()
             };
             httpRequester.postJSON(url, userData,
                 function (data) {
@@ -66,13 +66,21 @@ var persisters = (function () {
                     success(data);
                 }, error);
         },
-        logout: function (success, error) {
-            var url = this.rootUrl + "logout/" + sessionKey;
-            httpRequester.getJSON(url, function (data) {
-                clearUserData();
-                success(data);
-            }, error)
+        //logout: function (success, error) {
+        //    var url = this.rootUrl + "logout/" + sessionKey;
+        //    httpRequester.getJSON(url, function (data) {
+        //        clearUserData();
+        //        success(data);
+        //    }, error)
+        //},
+        getAll: function (success, error) {
+            var url = this.rootUrl + "get";
+            httpRequester.getJSON(url, success, error);
         },
+        getUserById: function (id, success, error) {
+            var url = this.rootUrl + "get?id=" + id;
+            httpRequester.getJSON(url, success, error);
+        }
     });
 
     var ChatPersister = Class.create({
