@@ -1,11 +1,12 @@
 ﻿/// <reference path="class.js" />
 /// <reference path="persisters.js" />
 /// <reference path="jquery-2.0.3.js" />
+/// <reference path="jquery-ui-1.10.3.js" />
 /// <reference path="ui.js" />
 
 var controllers = (function () {
 
-    var rootUrl = "http://localhost:40643/api/";
+    var rootUrl = "http://localhost:8759/api/";
     var userTextColor = "#aa0000";
     var otherUsersTextColor = "#0000aa";
     var Controller = Class.create({
@@ -17,19 +18,22 @@ var controllers = (function () {
                 this.loadChatUI(selector);
             }
             else {
-                this.loadLoginFormUI(selector);
+                // this.loadLoginFormUI(selector);
+                console.log("not logged in");
+                this.loadChatUI(selector);
             }
             this.attachUIEventHandlers(selector);
         },
         loadLoginFormUI: function (selector) {
             var loginFormHtml = ui.loginForm()
             $(selector).html(loginFormHtml);
+
         },
         loadChatUI: function (selector) {
             var self = this;
-            var gameUIHtml = ui.chatUI(this.persister.nickname());
+            var gameUIHtml = ui.chatUI();
             $(selector).html(gameUIHtml);
-
+            $("#tabscontent").tabs();
             this.attachUIEventHandlers(selector);
         },
         attachUIEventHandlers: function (selector) {
@@ -54,11 +58,12 @@ var controllers = (function () {
                     username: $(selector + " #tb-login-username").val(),
                     password: $(selector + " #tb-login-password").val()
                 }
-
+                console.log(user);
                 self.persister.user.login(user, function () {
-                    self.loadGameUI(selector);
+                    console.log("Logged in!");
                 }, function (err) {
-                    wrapper.find("#error-messages").text(err.responseJSON.Message);
+                    // wrapper.find("#error-messages").text(err.responseJSON.Message);
+                    console.log("Error logging in!");
                 });
                 return false;
             });
@@ -119,6 +124,7 @@ var controllers = (function () {
 
 $(function () {
     var controller = controllers.get();
-    controller.setChatReceiver("ferdi", "#chat-text-container");
-    controller.setChatSender("ferdi", "#send-tb","#send-btn");
+    controller.loadUI("#container");
+   // controller.setChatReceiver("ferdi", "#chat-text-container");
+   // controller.setChatSender("ferdi", "#send-tb","#send-btn");
 });

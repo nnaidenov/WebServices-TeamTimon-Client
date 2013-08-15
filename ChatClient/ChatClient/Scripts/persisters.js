@@ -4,7 +4,7 @@
 /// <reference path="src="http://cdn.pubnub.com/pubnub-3.5.3.min.js" />
 
 var persisters = (function () {
-    var username = "ferdi";//localStorage.getItem("username"); !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    var username = localStorage.getItem("username"); 
     var sessionKey = localStorage.getItem("sessionKey");
 
     function saveUserData(userData) {
@@ -39,13 +39,13 @@ var persisters = (function () {
     var UserPersister = Class.create({
         init: function (rootUrl) {
             //...api/user/
-            this.rootUrl = rootUrl + "user/";
+            this.rootUrl = rootUrl + "users";
         },
         login: function (user, success, error) {
-            var url = this.rootUrl + "login";
+            var url = this.rootUrl;
             var userData = {
                 username: user.username,
-                authCode: CryptoJS.SHA1(user.username + user.password).toString()
+                password: CryptoJS.SHA1(user.username + user.password).toString()
             };
 
             httpRequester.postJSON(url, userData,
@@ -55,10 +55,9 @@ var persisters = (function () {
                 }, error);
         },
         register: function (user, success, error) {
-            var url = this.rootUrl + "register";
+            var url = this.rootUrl;
             var userData = {
                 username: user.username,
-                nickname: user.nickname,
                 authCode: CryptoJS.SHA1(user.username + user.password).toString()
             };
             httpRequester.postJSON(url, userData,
@@ -74,8 +73,6 @@ var persisters = (function () {
                 success(data);
             }, error)
         },
-        scores: function (success, error) {
-        }
     });
 
     var ChatPersister = Class.create({

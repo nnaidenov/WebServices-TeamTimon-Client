@@ -29,28 +29,26 @@ var ui = (function () {
         return html;
     }
 
-    function buildChatUI(username) {
-        var html = '<h1>hello chat</h1>';
+    function buildChatUI() {
+        var html =
+               '<div id="chat-and-users">' +
+                   '<div id="chat-display-window">' +
+                       '<div id="tabscontent">' +
+                           '<ul id="active-chats-list">' +
+                               '<li><a href="#chat-text-container">Welcome!</a></li>' +
+                           '</ul>' +
+                           '<div id="chat-text-container" class="chat-text-container">Hello to Timon chat!</div>' +
+                       '</div>' +
+                   '</div>' +
+                   '<div id="users-window"></div>' +
+               '</div>' +
+               '<form id="send-form">' +
+                   '<input type="text" id="send-tb" />' +
+                   '<input type="submit" id="send-btn" value="send" />' +
+               '</form>';
         return html;
     }
-
-    function buildMessagesList(messages) {
-        var list = '<ul class="messages-list">';
-        var msg;
-        for (var i = 0; i < messages.length; i += 1) {
-            msg = messages[i];
-            var item =
-				'<li>' +
-					'<a href="#" class="message-state-' + msg.state + '">' +
-						msg.text +
-					'</a>' +
-				'</li>';
-            list += item;
-        }
-        list += '</ul>';
-        return list;
-    }
-
+   
     function appendTextWithColor(selector, message, color) {
         var paragraph = $('<p>');
         paragraph.css("color", color);
